@@ -1,2 +1,102 @@
 // For information on how to create your own theme, please see:
 // http://ionicframework.com/docs/theming/
+
+:root {
+  /* Colores del modo claro */
+}
+
+body.dark {
+  --ion-background-color: #121212;
+  --ion-background-color-rgb: 18,18,18;
+
+  --ion-text-color: #ffffff;
+  --ion-text-color-rgb: 255,255,255;
+
+  --ion-border-color: #222222;
+
+  --ion-card-background: #1e1e1e;
+  --ion-item-background: #1e1e1e;
+  --ion-toolbar-background: #1f1f1f;
+  --ion-tab-bar-background: #1f1f1f;
+
+  ion-content {
+    --background: var(--ion-background-color);
+  }
+
+  ion-card {
+    --background: #ffffff;
+    color: #000000;
+
+    ion-card-title {
+      color: #000000;
+    }
+
+    ion-card-subtitle {
+      color: #666666;
+    }
+
+    .producto-detalles {
+      background: #ffffff;
+      padding: 10px;
+      border-radius: 0 0 8px 8px;
+
+      h3 {
+        color: #000000;
+        margin: 5px 0;
+      }
+
+      p {
+        color: #666666;
+        margin: 3px 0;
+      }
+
+      .precio {
+        color: #3880ff;
+        font-weight: bold;
+      }
+    }
+  }
+
+  ion-item {
+    --background: var(--ion-item-background);
+    color: white;
+  }
+
+  ion-toolbar {
+    --background: var(--ion-toolbar-background);
+    color: white;
+  }
+
+  // Estilos específicos para el searchbar en modo oscuro
+  ion-searchbar {
+    --background: #1e1e1e;
+    --color: #ffffff;
+    --placeholder-color: #999999;
+    --icon-color: #ffffff;
+    --clear-button-color: #ffffff;
+    
+    &.searchbar-input {
+      color: #ffffff;
+    }
+  }
+
+  // Si necesitas estilos más específicos para el input
+  ion-searchbar input {
+    color: #ffffff !important;
+  }
+
+  // Para el fondo del searchbar
+  .searchbar-input.sc-ion-searchbar-md {
+    background-color: #1e1e1e;
+    color: #ffffff;
+  }
+
+  ion-content {
+    --background: var(--ion-background-color);
+
+    ion-card {
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      margin: 10px;
+    }
+  }
+}

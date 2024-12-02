@@ -1,0 +1,55 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mi Carrito</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="voucher-container">
+    <div class="voucher-header">
+      <h2>Voucher de Compra</h2>
+      <p class="voucher-number">{{ voucherNumber }}</p>
+      <p class="date">{{ currentDate | date:'dd/MM/yyyy HH:mm' }}</p>
+    </div>
+
+    <div class="products-section">
+      <h3>Detalle de Productos</h3>
+      <div class="product-item" *ngFor="let item of cartItems">
+        <div class="product-details">
+          <div class="product-name">{{ item.nombre }}</div>
+          <div class="product-info">
+            <span>Color: {{ item.color }}</span>
+            <span>Talla: {{ item.tallas }}</span>
+          </div>
+          <div class="price-info">
+            <span>Cantidad: {{ item.quantity }}</span>
+            <span>Precio Unitario: S/ {{ item.precio }}</span>
+            <span>Precio Total: S/ {{ item.precio * item.quantity }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="total-section">
+      <h3>Total a Pagar</h3>
+      <p class="total-amount">S/ {{ total }}</p>
+    </div>
+
+    <div class="action-buttons">
+      <ion-button fill="clear" (click)="printVoucher()">
+        <ion-icon name="print-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+
+      <ion-button fill="clear" (click)="shareVoucher()">
+        <ion-icon name="share-social-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+
+      <ion-button fill="clear" (click)="goHome()">
+        <ion-icon name="home-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

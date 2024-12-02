@@ -1,20 +1,101 @@
-<ion-header [translucent]="true">
+<ion-menu side="start" menuId="first" contentId="main-content">
+  <ion-header>
+    <ion-toolbar>
+      <ion-title>Menú</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content>
+    <ion-list>
+      <ion-item routerLink="/home">
+        <ion-icon slot="start" name="home-outline"></ion-icon>
+        <ion-label>Inicio</ion-label>
+      </ion-item>
+      <ion-item routerLink="/compras">
+        <ion-icon slot="start" name="cart-outline"></ion-icon>
+        <ion-label>Mis Compras</ion-label>
+      </ion-item>
+      <ion-item button (click)="logout()">
+        <ion-icon slot="start" name="log-out-outline" color="danger"></ion-icon>
+        <ion-label color="danger">Cerrar Sesión</ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+
+<ion-header>
   <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Productos</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="toggleTheme()">
+        <ion-icon 
+          [name]="isDarkMode ? 'sunny-outline' : 'moon-outline'"
+          [color]="isDarkMode ? 'warning' : 'primary'">
+        </ion-icon>
+      </ion-button>
+      <ion-button [routerLink]="['/carrito']" class="cart-btn">
+        <ion-icon slot="icon-only" name="cart-outline"></ion-icon>
+        <ion-badge class="cart-badge" *ngIf="cartItemCount > 0">{{ cartItemCount }}</ion-badge>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content id="main-content">
+  <ion-searchbar 
+    [(ngModel)]="searchTerm"
+    (ionChange)="buscarProductos()"
+    placeholder="Buscar producto por ID o nombre">
+  </ion-searchbar>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+  <div class="categories-container">
+    <ion-segment value="mujer" scrollable (ionChange)="segmentChanged($event)" mode="md">
+      <ion-segment-button value="MUJERES" layout="text-only">
+        <ion-label>MUJERES</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="HOMBRES" layout="text-only">
+        <ion-label>HOMBRES</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="NIÑOS" layout="text-only">
+        <ion-label>NIÑOS</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="ACCESORIOS" layout="text-only">
+        <ion-label>ACCESORIOS</ion-label>
+      </ion-segment-button>
+    </ion-segment>
   </div>
+
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6" size-md="6" *ngFor="let producto of productosFiltrados">
+        <ion-card class="producto-card">
+          <ion-img 
+            [src]="producto.imagen_url" 
+            [alt]="producto.nombre"
+            (ionError)="handleImageError($event)">
+          </ion-img>
+          <ion-card-header>
+            <div class="header-content">
+              <ion-card-title>{{ producto.nombre }}</ion-card-title>
+              <ion-text color="primary">
+                <h3>S/ {{ producto.precio | number:'1.2-2' }}</h3>
+              </ion-text>
+            </div>
+          </ion-card-header>
+          <ion-card-content>
+            <p class="producto-info">Color: {{ producto.color }}</p>
+            <p class="producto-info">Talla: {{ producto.tallas }}</p>
+            <p class="producto-info">{{ producto.descripcion }}</p>
+            <div class="cart-container">
+              <ion-button fill="clear" class="cart-button" (click)="addToCart(producto)">
+                <ion-icon name="cart-outline" color="primary"></ion-icon>
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

@@ -1,0 +1,17 @@
+ion-content {
+    --background: var(--ion-color-light);
+  }
+  
+  ion-card {
+    margin-top: 20px;
+    box-shadow: none;
+    border-radius: 8px;
+  }
+  
+  form {
+    margin-top: 16px;
+  }
+  
+  ion-button[type="submit"] {
+    margin-top: 24px;
+  }
