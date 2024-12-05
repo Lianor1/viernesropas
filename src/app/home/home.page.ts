@@ -131,4 +131,75 @@ export class HomePage implements OnInit {
   toggleTheme() {
     this.themeService.toggleDarkMode();
   }
+
+  async loadUserProfile() {
+    try {
+      const user = await this.supabase.getCurrentUser();
+      if (user) {
+        // Primero intentamos obtener el perfil existente
+        let { data, error } = await this.supabase.getClient()
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+
+        // Si no existe el perfil, lo creamos
+        if (error && error.code === 'PGRST116') {
+          const newProfile = {
+            id: user.id,
+            email: user.email,
+            nombre_completo: 'Usuario',
+            image: null,
+            created_at: new Date().toISOString()
+          };
+
+          // Insertar el nuevo perfil
+          const { data: insertedProfile, error: insertError } = await this.supabase.getClient()
+            .from('profiles')
+            .insert(newProfile)
+            .select()
+            .single();
+
+          if (insertError) throw insertError;
+          data = insertedProfile;
+        } else if (error) {
+          throw error;
+        }
+
+        if (data) {
+          // Si hay una imagen, obtener la URL pública del storage
+          if (data.image) {
+            const { data: { publicUrl } } = this.supabase.getClient()
+              .storage
+              .from('avatars')
+              .getPublicUrl(data.image);
+            
+            data.image = publicUrl;
+          }
+          this.userProfile = data;
+        }
+      }
+    } catch (error) {
+      console.error('Error loading user profile:', error);
+    }
+  }
+
+  getImageUrl(imagePath: string | null): string {
+    if (!imagePath) return this.defaultAvatarUrl;
+    
+    if (imagePath.startsWith('http')) {
+      return imagePath;
+    }
+    
+    const { data: { publicUrl } } = this.supabase.getClient()
+      .storage
+      .from('avatars')
+      .getPublicUrl(imagePath);
+    
+    return publicUrl;
+  }
+
+  goToProfile() {
+    this.router.navigate(['/home/profiles']);
+  }
 }

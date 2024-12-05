@@ -61,56 +61,69 @@ export class CarritoPage implements OnInit {
   }
 
   async processPayment() {
-    if (this.selectedPayment === 'vaucher') {
-      this.closePaymentModal();
-      this.router.navigate(['/vaucher'], {
-        state: { 
-          cartItems: this.cartItems.map(item => ({
-            nombre: item.nombre,
-            color: item.color,
-            tallas: item.tallas,
-            precio: item.precio,
-            quantity: item.quantity || 1
-          })),
-          total: this.total
-        }
-      });
-    } else if (this.selectedPayment) {
+    try {
+      if (!this.selectedPayment) {
+        const alert = await this.alertController.create({
+          header: 'Error',
+          message: 'Por favor, seleccione un método de pago',
+          buttons: ['OK']
+        });
+        await alert.present();
+        return;
+      }
+
+      const cartData = {
+        cartItems: this.cartItems.map(item => ({
+          nombre: item.nombre,
+          color: item.color,
+          tallas: item.tallas,
+          precio: item.precio,
+          quantity: item.quantity || 1
+        })),
+        total: this.total
+      };
+
+      this.cartService.setVaucherData(cartData);
+
       const alert = await this.alertController.create({
         header: 'Pago Exitoso',
-        message: `
-          <div style="display: flex; flex-direction: column; align-items: center; padding: 1rem;">
-            <div style="background-color: #ff0000; border-radius: 50%; width: 64px; height: 64px; display: flex; justify-content: center; align-items: center; margin-bottom: 1rem;">
-              <div style="color: #00ff00; font-size: 40px;">✓</div>
-            </div>
-            <p style="margin: 0; color: #2dd36f; font-weight: bold;">El pago con ${this.selectedPayment.toUpperCase()} se realizó correctamente</p>
-          </div>
-        `,
-        buttons: [{
-          text: 'OK',
-          handler: () => {
-            this.router.navigate(['/vaucher'], {
-              state: { 
-                cartItems: this.cartItems.map(item => ({
-                  nombre: item.nombre,
-                  color: item.color,
-                  tallas: item.tallas,
-                  precio: item.precio,
-                  quantity: item.quantity || 1
-                })),
-                total: this.total
-              }
-            });
-            
-            this.cartService.clearCart();
-            this.cartItems = [];
-            this.updateTotal();
-            this.closePaymentModal();
+        message: `Su pago con ${this.selectedPayment.toUpperCase()} se ha realizado correctamente`,
+        buttons: [
+          {
+            text: 'Ver Voucher',
+            handler: () => {
+              this.cartService.clearCart();
+              this.cartItems = [];
+              this.updateTotal();
+              this.closePaymentModal();
+              this.navCtrl.navigateForward('/vaucher')
+                .then(() => {
+                  console.log('Navegación exitosa');
+                })
+                .catch(err => {
+                  console.error('Error en navegación:', err);
+                });
           }
-        }]
+          }
+        ],
+        backdropDismiss: false
       });
 
       await alert.present();
+
+    } catch (error) {
+      console.error('Error en processPayment:', error);
+      const errorAlert = await this.alertController.create({
+        header: 'Error',
+        message: 'Hubo un problema al procesar el pago. Por favor, intente nuevamente.',
+        buttons: ['OK']
+      });
+      await errorAlert.present();
     }
+  }
+
+  // Agregar un método para validar el estado del carrito
+  private validateCart(): boolean {
+    return this.cartItems.length > 0 && this.total > 0;
   }
 }

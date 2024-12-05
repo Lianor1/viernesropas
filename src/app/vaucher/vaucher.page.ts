@@ -136,4 +136,42 @@ export class VaucherPage implements OnInit {
   goHome() {
     this.router.navigate(['/home']);
   }
+
+  // Método para descargar como PDF
+  public async downloadAsPDF() {
+    const loading = await this.loadingCtrl.create({
+      message: 'Generando PDF...'
+    });
+    await loading.present();
+
+    try {
+      const canvas = await html2canvas(this.vaucherContent.nativeElement);
+      const imageData = canvas.toDataURL('image/png');
+
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+      pdf.addImage(imageData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`vaucher_${this.vaucherNumber}.pdf`);
+
+      const toast = await this.toastCtrl.create({
+        message: 'PDF descargado exitosamente',
+        duration: 2000,
+        color: 'success'
+      });
+      toast.present();
+
+    } catch (error) {
+      console.error('Error al generar PDF:', error);
+      const toast = await this.toastCtrl.create({
+        message: 'Error al generar el PDF',
+        duration: 2000,
+        color: 'danger'
+      });
+      toast.present();
+    } finally {
+      loading.dismiss();
+    }
+  }
 }
