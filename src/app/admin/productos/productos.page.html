@@ -1,133 +1,67 @@
-<ion-menu contentId="main-content">
-  <ion-header>
-    <ion-toolbar>
-      <ion-title>Menú</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <ion-content>
-    <ion-list>
-      <ion-menu-toggle auto-hide="false">
-        <ion-item routerLink="/admin" routerDirection="root">
-          <ion-icon slot="start" name="admin-outline"></ion-icon>
-          <ion-label>Panel de Administración</ion-label>
-        </ion-item>
-        
-        <ion-item routerLink="/admin/productos" routerDirection="root">
-          <ion-icon slot="start" name="shirt-outline"></ion-icon>
-          <ion-label>Productos</ion-label>
-        </ion-item>
-
-        <ion-item routerLink="/home" routerDirection="root">
-          <ion-icon slot="start" name="home-outline"></ion-icon>
-          <ion-label>Home</ion-label>
-        </ion-item>
-
-        <ion-item (click)="logout()" button>
-          <ion-icon slot="start" name="log-out-outline"></ion-icon>
-          <ion-label>Cerrar Sesión</ion-label>
-        </ion-item>
-      </ion-menu-toggle>
-    </ion-list>
-  </ion-content>
-</ion-menu>
-
-<div class="ion-page" id="main-content">
-  <ion-header>
-    <ion-toolbar>
-      <ion-buttons slot="start">
-        <ion-menu-button></ion-menu-button>
-      </ion-buttons>
-      <ion-title>Agregar Producto</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <ion-content class="ion-padding">
-    <form (ngSubmit)="agregarProducto()">
-      <ion-item>
-        <ion-label position="floating">Código</ion-label>
-        <ion-input type="text" [(ngModel)]="producto.codigo" name="codigo" required></ion-input>
-      </ion-item>
-
-      <ion-item>
-        <ion-label position="floating">Nombre</ion-label>
-        <ion-input type="text" [(ngModel)]="producto.nombre" name="nombre" required></ion-input>
-      </ion-item>
-
-      <ion-item>
-        <ion-label position="floating">Descripción</ion-label>
-        <ion-textarea
-          [(ngModel)]="producto.descripcion"
-          name="descripcion"
-          rows="4"
-          placeholder="Descripción del producto"
-          required
-        ></ion-textarea>
-      </ion-item>
-
-      <ion-item>
-        <ion-label position="floating">Precio</ion-label>
-        <ion-input type="number" [(ngModel)]="producto.precio" name="precio" required></ion-input>
-      </ion-item>
-
-      <ion-item>
-        <ion-label position="floating">Color</ion-label>
-        <ion-input type="text" [(ngModel)]="producto.color" name="color" required></ion-input>
-      </ion-item>
-
-      <ion-item>
-        <ion-label>Talla</ion-label>
-        <ion-select [(ngModel)]="producto.tallas" 
-                   name="tallas" 
-                   required
-                   multiple="true"
-                   [compareWith]="compareWith">
-          <!-- Tallas para ropa -->
-          <ion-select-option value="XS">XS</ion-select-option>
-          <ion-select-option value="S">S</ion-select-option>
-          <ion-select-option value="M">M</ion-select-option>
-          <ion-select-option value="L">L</ion-select-option>
-          <ion-select-option value="XL">XL</ion-select-option>
-          <ion-select-option value="XXL">XXL</ion-select-option>
-        </ion-select>
-      </ion-item>
-
-      <ion-item>
-        <ion-label>Categoría</ion-label>
-        <ion-select [(ngModel)]="producto.categoria" name="categoria" required>
-          <ion-select-option value="hombre">Hombre</ion-select-option>
-          <ion-select-option value="mujer">Mujer</ion-select-option>
-          <ion-select-option value="nino">Niño</ion-select-option>
-          <ion-select-option value="accesorios">Accesorios</ion-select-option>
-        </ion-select>
-      </ion-item>
-
-      <ion-item>
-        <ion-label>Imagen del Producto</ion-label>
-        <ion-button expand="block" (click)="fileInput.click()" fill="outline">
-          <ion-icon name="image-outline" slot="start"></ion-icon>
-          Seleccionar Imagen
-        </ion-button>
-        <input
-          #fileInput
-          type="file"
-          (change)="onImageSelected($event)"
-          accept="image/*"
-          style="display: none"
-        >
-      </ion-item>
-
-      <!-- Preview de la imagen -->
-      <ion-item *ngIf="imagenPreview">
-        <img [src]="imagenPreview" style="max-width: 200px; margin: 10px auto;">
-        <ion-button fill="clear" color="danger" (click)="removeImage()" slot="end">
-          <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
-        </ion-button>
-      </ion-item>
-
-      <ion-button expand="block" type="submit" class="ion-margin-top">
-        Agregar Producto
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/admin" text="" icon="arrow-back-outline"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Gestión de Productos</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">
+        <ion-icon name="log-out-outline"></ion-icon>
       </ion-button>
-    </form>
-  </ion-content>
-</div>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="ion-padding">
+    <!-- Botones de acción -->
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+          <ion-button expand="block" (click)="mostrarComponente('agregar')" [color]="componenteActual === 'agregar' ? 'primary' : 'medium'">
+            <ion-icon name="add-outline" slot="start"></ion-icon>
+            Agregar Producto
+          </ion-button>
+        </ion-col>
+        <ion-col>
+          <ion-button expand="block" (click)="mostrarComponente('editar')" [color]="componenteActual === 'editar' ? 'primary' : 'medium'">
+            <ion-icon name="create-outline" slot="start"></ion-icon>
+            Editar Productos
+          </ion-button>
+        </ion-col>
+        <ion-col>
+          <ion-button expand="block" (click)="mostrarComponente('eliminar')" [color]="componenteActual === 'eliminar' ? 'primary' : 'medium'">
+            <ion-icon name="trash-outline" slot="start"></ion-icon>
+            Eliminar Productos
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <!-- Componentes dinámicos -->
+    <div [ngSwitch]="componenteActual">
+      <app-agregar-producto 
+        *ngSwitchCase="'agregar'"
+        (productoAgregado)="actualizarLista()">
+      </app-agregar-producto>
+
+      <app-editar-producto 
+        *ngSwitchCase="'editar'"
+        [productoSeleccionado]="productoParaEditar"
+        (productoEditado)="actualizarLista()">
+      </app-editar-producto>
+
+      <app-eliminar-producto 
+        *ngSwitchCase="'eliminar'"
+        (productoEliminado)="actualizarLista()">
+      </app-eliminar-producto>
+    </div>
+
+    <!-- Lista de productos -->
+    <app-lista-productos
+      [productos]="productos"
+      (seleccionarProducto)="seleccionarProducto($event)"
+      (eliminarProducto)="confirmarEliminarProducto($event)">
+    </app-lista-productos>
+  </div>
+</ion-content>

@@ -9,6 +9,37 @@ interface UserMetadata {
   apellidos?: string;
 }
 
+// Definir interfaces
+interface VaucherData {
+  id: string;
+  fecha: string;
+  total: number;
+}
+
+// Definir la interfaz VaucherItem antes de usarla
+interface VaucherItem {
+  id: string;
+  cantidad: number;
+  precio_unitario: number;
+  precio_total: number;
+  color: string;
+  talla: string;
+  producto_nombre: string;
+  vaucher_id: string;
+  vauchers: VaucherData;
+}
+
+interface Vaucher {
+  id: string;
+  fecha: string;
+  total: number;
+  vaucher_items: VaucherItem[];
+}
+
+interface VaucherMap {
+  [key: string]: Vaucher;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -20,6 +51,10 @@ export class SupabaseService {
       environment.supabaseUrl,
       environment.supabaseKey
     );
+  }
+
+  getClient(): SupabaseClient {
+    return this.supabase;
   }
 
   async login(email: string, password: string) {
@@ -162,8 +197,13 @@ export class SupabaseService {
   }
 
   async getCurrentUser(): Promise<User | null> {
-    const { data: { user } } = await this.supabase.auth.getUser();
-    return user;
+    try {
+      const { data: { user } } = await this.supabase.auth.getUser();
+      return user;
+    } catch (error) {
+      console.error('Error:', error);
+      return null;
+    }
   }
 
   obtenerUrlPublica(path: string) {
@@ -205,12 +245,8 @@ export class SupabaseService {
         .select('*');
       
       if (error) throw error;
+      return data || [];
 
-      data.forEach(producto => {
-        console.log('URL de imagen actualizada:', producto.imagen_url);
-      });
-
-      return data;
     } catch (error) {
       console.error('Error:', error);
       throw error;
@@ -330,31 +366,31 @@ export class SupabaseService {
     }
   }
 
-  async guardarVoucher(voucherData: {
-    numero_voucher: string;
+  async guardarVaucher(vaucherData: {
+    numero_vaucher: string;
     fecha: string;
     total: number;
     items: any[];
     usuario_id: string;
   }) {
     try {
-      // Primero guardamos el voucher
-      const { data: voucher, error: voucherError } = await this.supabase
-        .from('vouchers')
+      // Primero guardamos el vaucher
+      const { data: vaucher, error: vaucherError } = await this.supabase
+        .from('vauchers')
         .insert([{
-          numero_voucher: voucherData.numero_voucher,
-          fecha: voucherData.fecha,
-          total: voucherData.total,
-          usuario_id: voucherData.usuario_id
+          numero_vaucher: vaucherData.numero_vaucher,
+          fecha: vaucherData.fecha,
+          total: vaucherData.total,
+          usuario_id: vaucherData.usuario_id
         }])
         .select()
         .single();
 
-      if (voucherError) throw voucherError;
+      if (vaucherError) throw vaucherError;
 
-      // Luego guardamos los items del voucher
-      const voucherItems = voucherData.items.map(item => ({
-        voucher_id: voucher.id,
+      // Luego guardamos los items del vaucher
+      const vaucherItems = vaucherData.items.map(item => ({
+        vaucher_id: vaucher.id,
         producto_nombre: item.nombre,
         color: item.color,
         talla: item.tallas,
@@ -364,25 +400,25 @@ export class SupabaseService {
       }));
 
       const { error: itemsError } = await this.supabase
-        .from('voucher_items')
-        .insert(voucherItems);
+        .from('vaucher_items')
+        .insert(vaucherItems);
 
       if (itemsError) throw itemsError;
 
-      return voucher;
+      return vaucher;
     } catch (error) {
-      console.error('Error al guardar el voucher:', error);
+      console.error('Error al guardar el vaucher:', error);
       throw error;
     }
   }
 
-  async obtenerVouchersPorUsuario(usuarioId: string) {
+  async obtenerVauchersPorUsuario(usuarioId: string) {
     try {
       const { data, error } = await this.supabase
-        .from('vouchers')
+        .from('vauchers')
         .select(`
           *,
-          voucher_items (*)
+          vaucher_items (*)
         `)
         .eq('usuario_id', usuarioId)
         .order('fecha', { ascending: false });
@@ -390,7 +426,7 @@ export class SupabaseService {
       if (error) throw error;
       return data;
     } catch (error) {
-      console.error('Error al obtener vouchers:', error);
+      console.error('Error al obtener vauchers:', error);
       throw error;
     }
   }
@@ -400,5 +436,134 @@ export class SupabaseService {
       .from('productos')
       .select('*')
       .order('created_at', { ascending: false });
+  }
+
+  async obtenerVauchersPorUsuarioYFecha(usuarioId: string, fechaInicio: string | null, fechaFin: string) {
+    try {
+      let query = this.supabase
+        .from('vauchers')
+        .select(`
+          id,
+          fecha,
+          total,
+          vaucher_items (
+            id,
+            cantidad,
+            precio_unitario,
+            precio_total,
+            color,
+            talla,
+            producto_nombre
+          )
+        `)
+        .eq('usuario_id', usuarioId);
+
+      if (fechaInicio) {
+        query = query
+          .gte('fecha', fechaInicio)
+          .lte('fecha', fechaFin);
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+      return data as Vaucher[];
+
+    } catch (error) {
+      console.error('Error al obtener vauchers:', error);
+      throw error;
+    }
+  }
+
+  async obtenerVaucherPorId(vaucherId: string) {
+    try {
+      const { data, error } = await this.supabase
+        .from('vauchers')
+        .select(`
+          *,
+          voucher_items (
+            *,
+            productos (
+              nombre,
+              imagen_url
+            )
+          )
+        `)
+        .eq('id', vaucherId)
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error al obtener vaucher:', error);
+      throw error;
+    }
+  }
+
+  async uploadProfileImage(imageBase64: string) {
+    try {
+      const user = await this.getCurrentUser();
+      if (!user) throw new Error('No user logged in');
+
+      const filePath = `public/profiles/${user.id}/${new Date().getTime()}.jpg`;
+
+      // Convertir base64 a Blob
+      const byteCharacters = atob(imageBase64.split(',')[1]);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'image/jpeg' });
+
+      const { data, error } = await this.supabase.storage
+        .from('avatars')
+        .upload(filePath, blob, {
+          contentType: 'image/jpeg',
+          upsert: true
+        });
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = this.supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      return { publicUrl };
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      throw error;
+    }
+  }
+
+  async actualizarProducto(id: string, producto: any) {
+    try {
+      const { data, error } = await this.supabase
+        .from('productos')
+        .update(producto)
+        .eq('id', id);
+
+      if (error) throw error;
+
+      return data;
+    } catch (error) {
+      console.error('Error al actualizar producto:', error);
+      throw error;
+    }
+  }
+
+  async getProductoById(id: string) {
+    try {
+      const { data, error } = await this.supabase
+        .from('productos')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) throw error;
+      return { data, error: null };
+    } catch (error) {
+      console.error('Error al obtener producto por ID:', error);
+      return { data: null, error };
+    }
   }
 } 

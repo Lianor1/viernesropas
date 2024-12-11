@@ -1,0 +1,95 @@
+<div class="form-container">
+  <div class="form-header">
+    <h2>Agregar Producto</h2>
+  </div>
+
+  <form (ngSubmit)="agregarProducto()" class="product-form">
+    <div class="form-group">
+      <label>Código</label>
+      <input type="text" [(ngModel)]="producto.codigo" name="codigo" required>
+    </div>
+
+    <div class="form-group">
+      <label>Nombre</label>
+      <input type="text" [(ngModel)]="producto.nombre" name="nombre" required>
+    </div>
+
+    <div class="form-group">
+      <label>Descripción del producto</label>
+      <textarea 
+        [(ngModel)]="producto.descripcion" 
+        name="descripcion" 
+        rows="4" 
+        required></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Precio</label>
+      <input type="number" [(ngModel)]="producto.precio" name="precio" required>
+    </div>
+
+    <div class="form-group">
+      <label>Color</label>
+      <input type="text" [(ngModel)]="producto.color" name="color" required>
+    </div>
+
+    <div class="form-group">
+      <label>Talla</label>
+      <div class="tallas-options">
+        <div class="talla-option">
+          <input type="checkbox" id="XS" [(ngModel)]="tallasSeleccionadas.XS" name="talla-XS">
+          <label for="XS">XS</label>
+        </div>
+        <div class="talla-option">
+          <input type="checkbox" id="S" [(ngModel)]="tallasSeleccionadas.S" name="talla-S">
+          <label for="S">S</label>
+        </div>
+        <div class="talla-option">
+          <input type="checkbox" id="M" [(ngModel)]="tallasSeleccionadas.M" name="talla-M">
+          <label for="M">M</label>
+        </div>
+        <div class="talla-option">
+          <input type="checkbox" id="L" [(ngModel)]="tallasSeleccionadas.L" name="talla-L">
+          <label for="L">L</label>
+        </div>
+        <div class="talla-option">
+          <input type="checkbox" id="XL" [(ngModel)]="tallasSeleccionadas.XL" name="talla-XL">
+          <label for="XL">XL</label>
+        </div>
+        <div class="talla-option">
+          <input type="checkbox" id="XXL" [(ngModel)]="tallasSeleccionadas.XXL" name="talla-XXL">
+          <label for="XXL">XXL</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Categoría</label>
+      <select [(ngModel)]="producto.categoria" name="categoria" required>
+        <option value="" disabled selected>Selecciona una categoría</option>
+        <option value="hombre">Hombre</option>
+        <option value="mujer">Mujer</option>
+        <option value="nino">Niño</option>
+        <option value="accesorios">Accesorios</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Imagen del Producto</label>
+      <div class="file-input-wrapper">
+        <button type="button" class="file-select-button" (click)="fileInput.click()">
+          Seleccionar archivo
+        </button>
+        <span class="file-name">{{ imagenFile?.name || 'Sin archivos seleccionados' }}</span>
+        <input
+          #fileInput
+          type="file"
+          (change)="onImageSelected($event)"
+          accept="image/*"
+          style="display: none">
+      </div>
+    </div>
+
+    <button type="submit" class="submit-button">Agregar Producto</button>
+  </form>
+</div>

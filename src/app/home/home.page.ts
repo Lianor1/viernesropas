@@ -16,6 +16,13 @@ interface Producto {
   tallas?: string;
 }
 
+interface UserProfile {
+  id: string;
+  nombre_completo: string;
+  email: string;
+  image: string | null;
+}
+
 @Component({
   selector: 'app-home',
   templateUrl: 'home.page.html',
@@ -28,6 +35,9 @@ export class HomePage implements OnInit {
   cartItemCount: number = 0;
   searchTerm: string = '';
   isDarkMode: boolean = false;
+  userProfile: UserProfile | null = null;
+  defaultAvatarUrl = 'assets/default-avatar.png';
+  showSnow: boolean = true;
 
   constructor(
     private supabase: SupabaseService,
@@ -47,6 +57,11 @@ export class HomePage implements OnInit {
     this.cartService.getCartItemCount().subscribe((count: number) => {
       this.cartItemCount = count;
     });
+    this.loadUserProfile();
+  }
+
+  ionViewWillEnter() {
+    this.loadUserProfile();
   }
 
   async cargarProductos() {
@@ -143,39 +158,61 @@ export class HomePage implements OnInit {
           .eq('id', user.id)
           .single();
 
-        // Si no existe el perfil, lo creamos
-        if (error && error.code === 'PGRST116') {
-          const newProfile = {
-            id: user.id,
-            email: user.email,
-            nombre_completo: 'Usuario',
-            image: null,
-            created_at: new Date().toISOString()
-          };
+        if (error) {
+          if (error.code === 'PGRST116') {
+            // Obtener el email del usuario actual
+            const { data: userData, error: userError } = await this.supabase.getClient()
+              .auth.getUser();
 
-          // Insertar el nuevo perfil
-          const { data: insertedProfile, error: insertError } = await this.supabase.getClient()
-            .from('profiles')
-            .insert(newProfile)
-            .select()
-            .single();
+            if (userError) throw userError;
 
-          if (insertError) throw insertError;
-          data = insertedProfile;
-        } else if (error) {
-          throw error;
+            // Extraer el nombre del email (todo lo que está antes del @)
+            const userEmail = userData.user.email || '';
+            const userName = userEmail.split('@')[0];
+            // Capitalizar la primera letra y formatear el nombre
+            const formattedName = userName
+              .split('.')
+              .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(' ');
+
+            // Crear el perfil con el email y nombre formateado
+            const newProfile = {
+              id: user.id,
+              email: userEmail,
+              nombre_completo: formattedName, // Usar el nombre formateado
+              image: null,
+              created_at: new Date().toISOString()
+            };
+
+            const { data: insertedProfile, error: insertError } = await this.supabase.getClient()
+              .from('profiles')
+              .insert(newProfile)
+              .select()
+              .single();
+
+            if (insertError) throw insertError;
+            data = insertedProfile;
+          } else {
+            throw error;
+          }
         }
 
         if (data) {
-          // Si hay una imagen, obtener la URL pública del storage
+          // Verificar si data.image es una ruta completa o solo el nombre del archivo
           if (data.image) {
-            const { data: { publicUrl } } = this.supabase.getClient()
-              .storage
-              .from('avatars')
-              .getPublicUrl(data.image);
-            
-            data.image = publicUrl;
+            if (!data.image.startsWith('http')) {
+              console.log('Ruta de imagen original:', data.image);
+              const { data: { publicUrl } } = this.supabase.getClient()
+                .storage
+                .from('avatars')
+                .getPublicUrl(data.image);
+              
+              console.log('URL pública generada:', publicUrl);
+              data.image = publicUrl;
+            }
           }
+          
+          console.log('Perfil cargado:', data);
           this.userProfile = data;
         }
       }
@@ -185,17 +222,23 @@ export class HomePage implements OnInit {
   }
 
   getImageUrl(imagePath: string | null): string {
-    if (!imagePath) return this.defaultAvatarUrl;
+    if (!imagePath) {
+      console.log('No hay imagen, usando default:', this.defaultAvatarUrl);
+      return this.defaultAvatarUrl;
+    }
     
     if (imagePath.startsWith('http')) {
+      console.log('Usando URL directa:', imagePath);
       return imagePath;
     }
     
+    console.log('Generando URL para:', imagePath);
     const { data: { publicUrl } } = this.supabase.getClient()
       .storage
       .from('avatars')
       .getPublicUrl(imagePath);
     
+    console.log('URL generada:', publicUrl);
     return publicUrl;
   }
 

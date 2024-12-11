@@ -208,3 +208,85 @@ ion-item {
     }
   }
 }
+
+ion-icon {
+  &[name="cart"],
+  &[name="cart-outline"] {
+    font-size: 40px;
+    min-width: 32px;
+    min-height: 32px;
+  }
+}
+
+ion-button {
+  ion-icon[name="cart"],
+  ion-icon[name="cart-outline"] {
+    font-size: 38px;
+    min-width: 32px;
+    min-height: 32px;
+  }
+}
+
+.cart-counter {
+  background-color: var(--ion-color-danger, #eb445a);
+  color: white;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 30px;
+  position: absolute;
+  top: -5px;
+  right: -5px;
+}
+
+.custom-alert {
+  .alert-wrapper {
+    background: #ffffff;
+    border-radius: 15px;
+  }
+
+  .alert-head {
+    color: #2dd36f;
+    text-align: center;
+  }
+
+  .alert-button {
+    color: #3880ff;
+    font-weight: bold;
+  }
+}
+
+.empty-cart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 20px;
+  text-align: center;
+
+  ion-icon {
+    font-size: 80px;
+    color: var(--ion-color-medium);
+    margin-bottom: 20px;
+  }
+
+  h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: var(--ion-color-dark);
+  }
+
+  p {
+    color: var(--ion-color-medium);
+    margin-bottom: 30px;
+  }
+
+  .shop-button {
+    max-width: 200px;
+    margin: 0 auto;
+  }
+}

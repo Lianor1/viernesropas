@@ -7,6 +7,7 @@ import { BehaviorSubject } from 'rxjs';
 export class CartService {
   private cartItemCount = new BehaviorSubject(0);
   private items: any[] = [];
+  private vaucherData: any = null;
 
   getCartItemCount() {
     return this.cartItemCount.asObservable();
@@ -53,5 +54,27 @@ export class CartService {
   clearCart() {
     this.items = [];
     this.cartItemCount.next(0);
+  }
+
+  setVaucherData(data: any) {
+    console.log('Guardando datos del vaucher:', data);
+    this.vaucherData = data;
+    localStorage.setItem('vaucherData', JSON.stringify(data));
+  }
+
+  getVaucherData() {
+    if (!this.vaucherData) {
+      const savedData = localStorage.getItem('vaucherData');
+      if (savedData) {
+        this.vaucherData = JSON.parse(savedData);
+      }
+    }
+    console.log('Recuperando datos del vaucher:', this.vaucherData);
+    return this.vaucherData;
+  }
+
+  clearVaucherData() {
+    this.vaucherData = null;
+    localStorage.removeItem('vaucherData');
   }
 } 

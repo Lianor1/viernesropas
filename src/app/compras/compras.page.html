@@ -1,64 +1,60 @@
-<ion-menu side="start" contentId="main-content">
-  <ion-header>
-    <ion-toolbar>
-      <ion-title>Menú</ion-title>
-    </ion-toolbar>
-  </ion-header>
-  <ion-content>
-    <ion-list>
-      <ion-item routerLink="/home">
-        <ion-icon slot="start" name="home-outline"></ion-icon>
-        <ion-label>Inicio</ion-label>
-      </ion-item>
-      <ion-item (click)="logout()">
-        <ion-icon slot="start" name="log-out-outline" color="danger"></ion-icon>
-        <ion-label color="danger">Cerrar Sesión</ion-label>
-      </ion-item>
-    </ion-list>
-  </ion-content>
-</ion-menu>
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mis Compras</ion-title>
+  </ion-toolbar>
+</ion-header>
 
-<div class="ion-page" id="main-content">
-  <ion-header>
-    <ion-toolbar>
-      <ion-buttons slot="start">
-        <ion-back-button defaultHref="/home"></ion-back-button>
-      </ion-buttons>
-      <ion-title>Mis Compras</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <!-- Filtro de fecha -->
+  <ion-item>
+    <ion-label>Filtrar por fecha</ion-label>
+    <ion-select [(ngModel)]="filtroFecha" (ionChange)="onFiltroChange($event)">
+      <ion-select-option value="all">Todas las compras</ion-select-option>
+      <ion-select-option value="today">Hoy</ion-select-option>
+      <ion-select-option value="week">Última semana</ion-select-option>
+      <ion-select-option value="month">Último mes</ion-select-option>
+    </ion-select>
+  </ion-item>
 
-  <ion-content>
-    <ion-list>
-      <ion-item-group *ngFor="let voucher of vouchers">
-        <ion-item-divider sticky>
-          <ion-label>
-            <h2>Voucher #{{ voucher.numero_voucher }}</h2>
-            <p>{{ voucher.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
-          </ion-label>
-          <ion-note slot="end" color="primary">
-            S/ {{ voucher.total }}
-          </ion-note>
-        </ion-item-divider>
+  <!-- Lista de compras -->
+  <div *ngIf="vauchers!.length > 0">
+    <ion-card *ngFor="let vaucher of vauchers" (click)="verDetalles(vaucher)">
+      <ion-card-header>
+        <ion-card-subtitle>
+          <ion-badge color="primary">Vaucher #{{ vaucher.id }}</ion-badge>
+          <span>{{ vaucher.fecha | date:'dd/MM/yyyy HH:mm' }}</span>
+        </ion-card-subtitle>
+        <ion-card-title>S/ {{ vaucher.total }}</ion-card-title>
+      </ion-card-header>
 
-        <ion-item *ngFor="let item of voucher.voucher_items">
+      <ion-card-content>
+        <ion-item *ngFor="let item of vaucher.vaucher_items" lines="none">
           <ion-label>
             <h3>{{ item.producto_nombre }}</h3>
-            <p>Color: {{ item.color }} | Talla: {{ item.talla }}</p>
-            <p>Cantidad: {{ item.cantidad }} x S/ {{ item.precio_unitario }}</p>
+            <p>
+              <ion-badge color="medium">{{ item.color }}</ion-badge>
+              <ion-badge color="medium">{{ item.talla }}</ion-badge>
+            </p>
+            <p>
+              {{ item.cantidad }}x S/ {{ item.precio_unitario }}
+              <span>S/ {{ item.precio_total }}</span>
+            </p>
           </ion-label>
-          <ion-note slot="end" color="medium">
-            S/ {{ item.precio_total }}
-          </ion-note>
         </ion-item>
-      </ion-item-group>
-    </ion-list>
+      </ion-card-content>
+    </ion-card>
+  </div>
 
-    <!-- Mensaje cuando no hay compras -->
-    <div class="empty-state" *ngIf="!vouchers?.length">
-      <ion-icon name="cart-outline" size="large"></ion-icon>
-      <h2>No tienes compras realizadas</h2>
-      <p>Tus compras aparecerán aquí</p>
-    </div>
-  </ion-content>
-</div>
+  <!-- Estado vacío -->
+  <div *ngIf="!vauchers!.length" class="ion-text-center ion-padding">
+    <ion-icon name="bag-handle-outline" size="large"></ion-icon>
+    <h2>No tienes compras realizadas</h2>
+    <p>¡Explora nuestra tienda y encuentra productos increíbles!</p>
+    <ion-button expand="block" routerLink="/home">
+      Ir a comprar
+    </ion-button>
+  </div>
+</ion-content>

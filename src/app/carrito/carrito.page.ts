@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CartService } from '../services/cart.service';
-import { Router } from '@angular/router';
+import { NavController } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-carrito',
@@ -16,8 +17,9 @@ export class CarritoPage implements OnInit {
 
   constructor(
     private cartService: CartService,
-    private router: Router,
-    private alertController: AlertController
+    private navCtrl: NavController,
+    private alertController: AlertController,
+    private toastController: ToastController
   ) {}
 
   ngOnInit() {
@@ -26,8 +28,9 @@ export class CarritoPage implements OnInit {
   }
 
   updateTotal() {
-    this.total = this.cartItems.reduce((sum, item) => 
-      sum + (parseFloat(item.precio) * (item.quantity || 1)), 0);
+    this.total = this.cartItems.reduce((sum, item) => {
+      return sum + (item.precio * (item.quantity || 1));
+    }, 0);
   }
 
   decreaseQuantity(item: any) {
@@ -52,6 +55,10 @@ export class CarritoPage implements OnInit {
   }
 
   showPaymentOptions() {
+    if (this.cartItems.length === 0) {
+      this.presentToast('Agrega productos al carrito para continuar');
+      return;
+    }
     this.showPaymentModal = true;
   }
 
@@ -83,6 +90,7 @@ export class CarritoPage implements OnInit {
         total: this.total
       };
 
+      console.log('Guardando datos para el vaucher:', cartData);
       this.cartService.setVaucherData(cartData);
 
       const alert = await this.alertController.create({
@@ -92,18 +100,8 @@ export class CarritoPage implements OnInit {
           {
             text: 'Ver Voucher',
             handler: () => {
-              this.cartService.clearCart();
-              this.cartItems = [];
-              this.updateTotal();
-              this.closePaymentModal();
-              this.navCtrl.navigateForward('/vaucher')
-                .then(() => {
-                  console.log('Navegación exitosa');
-                })
-                .catch(err => {
-                  console.error('Error en navegación:', err);
-                });
-          }
+              window.location.href = '/vaucher';
+            }
           }
         ],
         backdropDismiss: false
@@ -125,5 +123,15 @@ export class CarritoPage implements OnInit {
   // Agregar un método para validar el estado del carrito
   private validateCart(): boolean {
     return this.cartItems.length > 0 && this.total > 0;
+  }
+
+  async presentToast(message: string) {
+    const toast = await this.toastController.create({
+      message: message,
+      duration: 2000,
+      position: 'bottom',
+      color: 'warning'
+    });
+    toast.present();
   }
 }

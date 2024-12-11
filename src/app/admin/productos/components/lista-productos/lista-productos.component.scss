@@ -1,0 +1,130 @@
+.productos-page {
+  background: #f5f5f5;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+  h1 {
+    margin: 0;
+    font-size: 20px;
+  }
+
+  button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 8px;
+  }
+}
+
+.action-buttons {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 16px;
+    
+    &.btn-add {
+      background: #666;
+      color: white;
+    }
+    
+    &.btn-edit {
+      background: #666;
+      color: white;
+    }
+    
+    &.btn-delete-all {
+      background: #666;
+      color: white;
+    }
+
+    i {
+      font-size: 18px;
+    }
+  }
+}
+
+.productos-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  padding: 16px;
+}
+
+.producto-item {
+  background: white;
+  padding: 16px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.info-item {
+  div {
+    margin-bottom: 8px;
+  }
+
+  .label {
+    color: #666;
+    font-weight: 500;
+  }
+}
+
+.acciones {
+  margin-top: 12px;
+  
+  a {
+    cursor: pointer;
+    margin-right: 16px;
+    text-decoration: none;
+    
+    &.edit-link {
+      color: #007bff;
+    }
+    
+    &.delete-link {
+      color: #dc3545;
+    }
+  }
+}
+
+// Responsive adjustments
+@media (min-width: 768px) {
+  .action-buttons {
+    flex-direction: row;
+    justify-content: space-between;
+    
+    button {
+      width: auto;
+      padding: 12px 24px;
+    }
+  }
+}
+
+.editing {
+  background-color: rgba(0, 123, 255, 0.1);
+}
+
+.edit-link.active {
+  font-weight: bold;
+  color: #0056b3;
+}

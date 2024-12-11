@@ -1,0 +1,74 @@
+<div class="edit-product-container">
+  <h2>Editar Producto</h2>
+  <form [formGroup]="productoForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label>Código</label>
+      <ion-input type="text" formControlName="codigo" placeholder="P001"></ion-input>
+    </div>
+
+    <div class="form-group">
+      <label>Nombre</label>
+      <ion-input type="text" formControlName="nombre" placeholder="Camiseta Básica"></ion-input>
+    </div>
+
+    <div class="form-group">
+      <label>Descripción del producto</label>
+      <ion-textarea formControlName="descripcion" placeholder="Camiseta de algodón"></ion-textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Precio</label>
+      <ion-input type="number" formControlName="precio" placeholder="19.99"></ion-input>
+    </div>
+
+    <div class="form-group">
+      <label>Color</label>
+      <ion-input type="text" formControlName="color" placeholder="Negro"></ion-input>
+    </div>
+
+    <div class="form-group">
+      <label>Talla</label>
+      <ion-select formControlName="talla" placeholder="Seleccionar talla">
+        <ion-select-option value="XS">XS</ion-select-option>
+        <ion-select-option value="S">S</ion-select-option>
+        <ion-select-option value="M">M</ion-select-option>
+        <ion-select-option value="L">L</ion-select-option>
+        <ion-select-option value="XL">XL</ion-select-option>
+      </ion-select>
+    </div>
+
+    <div class="form-group">
+      <label>Categoría</label>
+      <ion-select formControlName="categoria" placeholder="Seleccionar categoría">
+        <ion-select-option value="Tops">Hombres</ion-select-option>
+        <ion-select-option value="Pantalones">Mujeres</ion-select-option>
+        <ion-select-option value="Vestidos">Niños</ion-select-option>
+        <ion-select-option value="Accesorios">Accesorios</ion-select-option>
+      </ion-select>
+    </div>
+
+    <div class="form-group">
+      <label>Imagen del Producto</label>
+      <div class="ion-padding">
+        <input 
+          #fileInput
+          type="file" 
+          (change)="manejarSeleccionArchivo($event)" 
+          accept="image/*" 
+          style="display: none">
+        
+        <ion-button expand="block" (click)="seleccionarImagen()">
+          <ion-icon name="image-outline" slot="start"></ion-icon>
+          Seleccionar archivo
+        </ion-button>
+        
+        <small *ngIf="!imagenSeleccionada">Sin archivos seleccionados</small>
+        <small *ngIf="imagenSeleccionada">Imagen seleccionada</small>
+      </div>
+    </div>
+
+    <ion-button expand="block" type="submit" [disabled]="!productoForm.valid">
+      Actualizar Producto
+    </ion-button>
+  </form>
+</div>

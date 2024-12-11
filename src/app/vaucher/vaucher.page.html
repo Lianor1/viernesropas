@@ -1,17 +1,17 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home"></ion-back-button>
+      <ion-back-button defaultHref="/home" text="" icon="arrow-back-outline"></ion-back-button>
     </ion-buttons>
-    <ion-title>Mi Carrito</ion-title>
+    <ion-title>Vaucher de Compra</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <div class="voucher-container">
-    <div class="voucher-header">
-      <h2>Voucher de Compra</h2>
-      <p class="voucher-number">{{ voucherNumber }}</p>
+  <div class="vaucher-container" #vaucherContent>
+    <div class="vaucher-header">
+      <h2>Vaucher de Compra</h2>
+      <p class="vaucher-number">{{ vaucherNumber }}</p>
       <p class="date">{{ currentDate | date:'dd/MM/yyyy HH:mm' }}</p>
     </div>
 
@@ -37,19 +37,23 @@
       <h3>Total a Pagar</h3>
       <p class="total-amount">S/ {{ total }}</p>
     </div>
+  </div>
 
-    <div class="action-buttons">
-      <ion-button fill="clear" (click)="printVoucher()">
-        <ion-icon name="print-outline" slot="icon-only"></ion-icon>
-      </ion-button>
+  <div class="action-buttons">
+<!-- Opción 2: Con texto debajo del icono -->
+<ion-button fill="clear" (click)="downloadAsPDF()" class="ion-text-center">
+  <div class="button-inner">
+    <ion-icon name="document-outline"></ion-icon>
+    <small>PDF</small>
+  </div>
+</ion-button>
 
-      <ion-button fill="clear" (click)="shareVoucher()">
-        <ion-icon name="share-social-outline" slot="icon-only"></ion-icon>
-      </ion-button>
+    <ion-button fill="clear" (click)="downloadImage()">
+      <ion-icon name="image-outline" slot="icon-only"></ion-icon>
+    </ion-button>
 
-      <ion-button fill="clear" (click)="goHome()">
-        <ion-icon name="home-outline" slot="icon-only"></ion-icon>
-      </ion-button>
-    </div>
+    <ion-button fill="clear" (click)="goHome()">
+      <ion-icon name="home-outline" slot="start"></ion-icon>
+    </ion-button>
   </div>
 </ion-content>

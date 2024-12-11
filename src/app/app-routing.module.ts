@@ -21,16 +21,17 @@ const routes: Routes = [
   },
   {
     path: 'carrito',
-    loadChildren: () => import('./carrito/carrito.module').then( m => m.CarritoPageModule)
+    loadChildren: () => import('./carrito/carrito.module').then(m => m.CarritoPageModule)
   },
   {
     path: 'vaucher',
-    loadChildren: () => import('./vaucher/vaucher.module').then( m => m.VaucherPageModule)
+    loadChildren: () => import('./vaucher/vaucher.module').then(m => m.VaucherPageModule)
   },
   {
     path: 'compras',
-    loadChildren: () => import('./compras/compras.module').then( m => m.ComprasPageModule)
-  }
+    loadChildren: () => import('./compras/compras.module').then(m => m.ComprasPageModule)
+  },
+  
 ];
 
 @NgModule({

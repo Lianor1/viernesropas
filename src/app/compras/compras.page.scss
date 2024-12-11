@@ -23,40 +23,115 @@ ion-item-divider {
   align-items: center;
   justify-content: center;
   height: 100%;
-  padding: 20px;
+  padding: 2rem;
   text-align: center;
 
   ion-icon {
     font-size: 64px;
     color: var(--ion-color-medium);
-    margin-bottom: 16px;
+    margin-bottom: 1rem;
   }
 
   h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
     color: var(--ion-color-dark);
-    margin-bottom: 8px;
   }
 
   p {
     color: var(--ion-color-medium);
-    margin-bottom: 24px;
+    margin-bottom: 2rem;
+  }
+
+  .shop-now {
+    max-width: 200px;
   }
 }
 
 ion-thumbnail {
-  --size: 48px;
-  background: var(--ion-color-light);
+  width: 60px;
+  height: 60px;
   border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  ion-icon {
-    font-size: 24px;
-    color: var(--ion-color-medium);
-  }
+  overflow: hidden;
+  margin-right: 12px;
 }
 
 ion-note {
   font-weight: bold;
+}
+
+ion-card {
+  margin: 10px;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+
+  ion-card-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #eee;
+
+    .fecha {
+      float: right;
+      color: var(--ion-color-medium);
+      font-size: 0.9em;
+    }
+
+    .total-amount {
+      font-size: 1.5em;
+      color: var(--ion-color-primary);
+      margin-top: 10px;
+    }
+  }
+}
+
+.item-details {
+  margin: 8px 0;
+  
+  ion-badge {
+    margin-right: 8px;
+    padding: 4px 8px;
+  }
+}
+
+.price-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--ion-color-medium);
+
+  .total {
+    font-weight: bold;
+    color: var(--ion-color-dark);
+  }
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  
+  ion-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    ion-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.25rem;
+    }
+    
+    small {
+      font-size: 0.75rem;
+    }
+  }
+}
+
+.vaucher-card {
+  margin: 1rem;
+  
+  ion-card-subtitle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 }

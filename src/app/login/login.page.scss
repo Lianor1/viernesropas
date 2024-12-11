@@ -1,11 +1,24 @@
 ion-content {
-    --background: var(--ion-color-light);
+    --background: url('https://image.cdn2.seaart.me/temp-convert-webp/highwebp/2024-11-22/ct066ele878c73c6tp00-2/4ae21d9f1144c7d5e51c8d213dd8f4a7_low.webp') no-repeat center center fixed;
+    --background-size: cover;
+  
+    .ion-padding {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   }
   
   ion-card {
-    margin-top: 20px;
+    width: 90%;
+    max-width: 400px;
+    margin: 0 auto;
     box-shadow: none;
     border-radius: 8px;
+  
+    // Opcional: añadir un efecto de elevación suave
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
   
   form {

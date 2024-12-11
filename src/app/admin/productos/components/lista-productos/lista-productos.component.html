@@ -1,0 +1,16 @@
+<div class="productos-container">
+  <div class="producto-item" *ngFor="let producto of productos">
+    <div class="info-item">
+      <div><span class="label">Código:</span> {{ producto.codigo }}</div>
+      <div><span class="label">Nombre:</span> {{ producto.nombre }}</div>
+      <div><span class="label">Precio:</span> ${{ producto.precio }}</div>
+      <div><span class="label">Color:</span> {{ producto.color }}</div>
+      <div><span class="label">Tallas:</span> {{ producto.tallas.join(', ') }}</div>
+      <div><span class="label">Categoría:</span> {{ producto.categoria }}</div>
+      <div class="acciones">
+        <a class="edit-link" (click)="onSeleccionar(producto)">Editar</a>
+        <a class="delete-link" (click)="onEliminar(producto)">Eliminar</a>
+      </div>
+    </div>
+  </div>
+</div>

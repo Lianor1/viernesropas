@@ -1,0 +1,35 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mi Perfil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="profile-image-container">
+    <ion-avatar (click)="presentActionSheet()">
+      <img [src]="getImageUrl(profile.image)" alt="Profile">
+      <div class="change-photo-overlay">
+        <ion-icon name="camera"></ion-icon>
+      </div>
+    </ion-avatar>
+  </div>
+
+  <form (ngSubmit)="updateProfile()">
+    <ion-item>
+      <ion-label position="stacked">Nombre completo</ion-label>
+      <ion-input [(ngModel)]="profile.nombre_completo" name="nombre_completo"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Email</ion-label>
+      <ion-input [(ngModel)]="profile.email" name="email" readonly></ion-input>
+    </ion-item>
+
+    <ion-button expand="block" type="submit" class="ion-margin-top">
+      Guardar cambios
+    </ion-button>
+  </form>
+</ion-content>

@@ -1,70 +1,81 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button text="Back" defaultHref="/home"></ion-back-button>
+      <ion-back-button text="" defaultHref="/home"></ion-back-button>
     </ion-buttons>
     <ion-title>Mi Carrito</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-list>
-    <ion-item *ngFor="let item of cartItems" lines="full">
-      <ion-thumbnail slot="start">
-        <img [src]="item.imagen_url" />
-      </ion-thumbnail>
-      <ion-label>
-        <h2>{{ item.nombre }}</h2>
-        <p>Color: {{ item.color }}</p>
-        <p>Talla: {{ item.tallas }}</p>
-        <p class="description">{{ item.descripcion }}</p>
-      </ion-label>
-      <div class="item-end">
-        <div class="quantity-controls">
-          <ion-button fill="clear" (click)="decreaseQuantity(item)">-</ion-button>
-          <span>{{ item.quantity || 1 }}</span>
-          <ion-button fill="clear" (click)="increaseQuantity(item)">+</ion-button>
+  <!-- Mostrar cuando hay productos -->
+  <ng-container *ngIf="cartItems.length > 0">
+    <ion-list>
+      <ion-item *ngFor="let item of cartItems" lines="full">
+        <ion-thumbnail slot="start">
+          <img [src]="item.imagen_url" />
+        </ion-thumbnail>
+        <ion-label>
+          <h2>{{ item.nombre }}</h2>
+          <p>Color: {{ item.color }}</p>
+          <p>Talla: {{ item.tallas }}</p>
+          <p class="description">{{ item.descripcion }}</p>
+        </ion-label>
+        <div class="item-end">
+          <div class="quantity-controls">
+            <ion-button fill="clear" (click)="decreaseQuantity(item)">-</ion-button>
+            <span>{{ item.quantity || 1 }}</span>
+            <ion-button fill="clear" (click)="increaseQuantity(item)">+</ion-button>
+          </div>
+          <ion-button fill="clear" color="danger" class="trash-button" (click)="removeFromCart(item)">
+            <ion-icon name="trash-outline"></ion-icon>
+          </ion-button>
+          <div class="price">
+            S/ {{ item.precio * (item.quantity || 1) | number:'1.2-2' }}
+          </div>
         </div>
-        <ion-button fill="clear" color="danger" class="trash-button" (click)="removeFromCart(item)">
-          <ion-icon name="trash-outline"></ion-icon>
-        </ion-button>
-        <div class="price">
-          S/ {{ item.precio * (item.quantity || 1) | number:'1.2-2' }}
-        </div>
-      </div>
-    </ion-item>
-  </ion-list>
+      </ion-item>
+    </ion-list>
 
-  <div class="total-section">
-    <ion-text>Total</ion-text>
-    <ion-text class="total-price">
-      S/ {{ total | number:'1.2-2' }}
-    </ion-text>
-  </div>
+    <div class="total-section">
+      <ion-text>Total</ion-text>
+      <ion-text class="total-price">
+        S/ {{ total | number:'1.2-2' }}
+      </ion-text>
+    </div>
 
-  <div class="checkout-button">
-    <ion-button expand="block" (click)="showPaymentOptions()">
-      Proceder al pago
+    <div class="checkout-button">
+      <ion-button expand="block" (click)="showPaymentOptions()">
+        Proceder al pago
+      </ion-button>
+    </div>
+  </ng-container>
+
+  <!-- Mostrar cuando el carrito está vacío -->
+  <div class="empty-cart" *ngIf="cartItems.length === 0">
+    <ion-icon name="cart-outline" size="large"></ion-icon>
+    <h2>Tu carrito está vacío</h2>
+    <p>¡Agrega productos para comenzar!</p>
+    <ion-button expand="block" routerLink="/home" class="shop-button">
+      Ir a comprar
     </ion-button>
   </div>
 
-  <!-- Modal de pagos (sin cambios) -->
-
-  <!-- Modal de Métodos de Pago -->
-  <div class="payment-modal" [class.show-modal]="showPaymentModal">
+  <!-- Modal de Métodos de Pago (solo visible si hay productos) -->
+  <div class="payment-modal" [class.show-modal]="showPaymentModal && cartItems.length > 0">
     <div class="modal-content">
       <h2>Métodos de Pago</h2>
       <div class="payment-options">
         <div class="payment-option" [class.selected]="selectedPayment === 'visa'" (click)="selectedPayment = 'visa'">
-          <img src="assets/visa-logo.png" alt="Visa">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png" alt="Visa">
           <span>Visa</span>
         </div>
         <div class="payment-option" [class.selected]="selectedPayment === 'yape'" (click)="selectedPayment = 'yape'">
-          <img src="assets/yape-logo.png" alt="Yape">
+          <img src="https://play-lh.googleusercontent.com/y5S3ZIz-ohg3FirlISnk3ca2yQ6cd825OpA0YK9qklc5W8MLSe0NEIEqoV-pZDvO0A8" alt="Yape">
           <span>Yape</span>
         </div>
         <div class="payment-option" [class.selected]="selectedPayment === 'bbva'" (click)="selectedPayment = 'bbva'">
-          <img src="assets/bbva-logo.png" alt="BBVA">
+          <img src="https://play-lh.googleusercontent.com/ZsRXxnAaNfWkGh0znnApV1d2BnTysMJVgZSAG5i4xX5c3weg6C0IGr6rtkqWMrXZriA" alt="BBVA">
           <span>BBVA</span>
         </div>
       </div>

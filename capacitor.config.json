@@ -1,0 +1,6 @@
+{
+  "appId": "com.appropas.app",
+  "appName": "appropas",
+  "webDir": "www",
+  "bundledWebRuntime": false
+} 
