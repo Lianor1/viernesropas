@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { MenuController, Platform } from '@ionic/angular';
+import { MenuController, Platform, ToastController } from '@ionic/angular';
 import { SupabaseService } from '../services/supabase.service';
 import { CartService } from '../services/cart.service';
 import { ThemeService } from '../services/theme.service';
+import { register } from 'swiper/element/bundle';
+register();
 
 interface Producto {
   id?: string;
@@ -14,6 +16,7 @@ interface Producto {
   descripcion?: string;
   color?: string;
   tallas?: string;
+  rating?: number;
 }
 
 interface UserProfile {
@@ -39,13 +42,32 @@ export class HomePage implements OnInit {
   defaultAvatarUrl = 'assets/default-avatar.png';
   showSnow: boolean = true;
 
+  slideOpts = {
+    initialSlide: 0,
+    speed: 400,
+    autoplay: {
+      delay: 3000,
+    },
+    loop: true
+  };
+
+  swiperConfig = {
+    slidesPerView: 1,
+    pagination: true,
+    autoplay: {
+      delay: 3000
+    },
+    loop: true
+  };
+
   constructor(
     private supabase: SupabaseService,
     private menuCtrl: MenuController,
     private router: Router,
     private cartService: CartService,
     private platform: Platform,
-    private themeService: ThemeService
+    private themeService: ThemeService,
+    private toastController: ToastController
   ) {
     this.themeService.isDarkMode.subscribe(
       darkMode => this.isDarkMode = darkMode
@@ -244,5 +266,65 @@ export class HomePage implements OnInit {
 
   goToProfile() {
     this.router.navigate(['/home/profiles']);
+  }
+
+  async doRefresh(event: any) {
+    try {
+      // Recargar productos
+      await this.cargarProductos();
+      
+      // Recargar perfil de usuario
+      await this.loadUserProfile();
+      
+      // Actualizar contador del carrito
+      this.cartService.getCartItemCount().subscribe((count: number) => {
+        this.cartItemCount = count;
+      });
+
+      // Finalizar el refresher
+      event.target.complete();
+    } catch (error) {
+      console.error('Error al refrescar:', error);
+      event.target.complete();
+    }
+  }
+
+  ngAfterViewInit() {
+    const swiperEl = document.querySelector('swiper-container');
+    
+    if (swiperEl) { // Verificamos que el elemento exista
+      const params = {
+        slidesPerView: 1,
+        navigation: true,
+        pagination: {
+          clickable: true,
+        },
+        autoplay: {
+          delay: 3000,
+          disableOnInteraction: false
+        },
+        loop: true,
+        effect: 'fade',
+      };
+
+      // Asignamos los parámetros de manera segura
+      Object.assign(swiperEl as any, params);
+
+      // Inicializamos el swiper
+      (swiperEl as any).initialize();
+    }
+  }
+
+  async rateProduct(producto: any, rating: number) {
+    producto.rating = rating;
+    
+    // Aquí puedes agregar la lógica para guardar la valoración en tu base de datos
+    
+    const toast = await this.toastController.create({
+      message: `Has valorado ${producto.nombre} con ${rating} estrellas`,
+      duration: 3000,
+      position: 'bottom'
+    });
+    toast.present();
   }
 }

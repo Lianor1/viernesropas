@@ -11,24 +11,34 @@
         <form (ngSubmit)="onSubmit()">
           <ng-container *ngIf="!isLogin">
             <ion-item>
+              <ion-icon name="person-outline" slot="start"></ion-icon>
               <ion-label position="floating">Nombres</ion-label>
               <ion-input type="text" [(ngModel)]="nombres" name="nombres" required></ion-input>
             </ion-item>
 
             <ion-item>
+              <ion-icon name="people-outline" slot="start"></ion-icon>
               <ion-label position="floating">Apellidos</ion-label>
               <ion-input type="text" [(ngModel)]="apellidos" name="apellidos" required></ion-input>
             </ion-item>
           </ng-container>
 
           <ion-item>
+            <ion-icon name="mail-outline" slot="start"></ion-icon>
             <ion-label position="floating">Email</ion-label>
             <ion-input type="email" [(ngModel)]="email" name="email" required></ion-input>
           </ion-item>
 
           <ion-item>
+            <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
             <ion-label position="floating">Contraseña</ion-label>
-            <ion-input type="password" [(ngModel)]="password" name="password" required></ion-input>
+            <ion-input [type]="showPassword ? 'text' : 'password'" [(ngModel)]="password" name="password" required></ion-input>
+            <ion-icon 
+              [name]="showPassword ? 'eye-outline' : 'eye-off-outline'" 
+              slot="end" 
+              (click)="showPassword = !showPassword"
+              class="password-toggle">
+            </ion-icon>
           </ion-item>
 
           <ion-button expand="block" type="submit" class="ion-margin-top">

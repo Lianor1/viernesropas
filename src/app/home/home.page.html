@@ -60,6 +60,15 @@
 </ion-header>
 
 <ion-content id="main-content">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-down-circle-outline"
+      refreshingSpinner="circles"
+      pullingText="Desliza para actualizar"
+      refreshingText="...Actualizando...">
+    </ion-refresher-content>
+  </ion-refresher>
+
   <ion-searchbar 
     [(ngModel)]="searchTerm"
     (ionChange)="buscarProductos()"
@@ -82,6 +91,25 @@
       </ion-segment-button>
     </ion-segment>
   </div>
+
+  <!-- Slider con navegación y paginación -->
+  <swiper-container class="promo-slider" init="false">
+    <swiper-slide>
+      <div class="promo-slide">
+        <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1000" alt="Moda Mujer">
+      </div>
+    </swiper-slide>
+    <swiper-slide>
+      <div class="promo-slide">
+        <img src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=1000" alt="Ofertas">
+      </div>
+    </swiper-slide>
+    <swiper-slide>
+      <div class="promo-slide">
+        <img src="https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=1000" alt="Nueva Colección">
+      </div>
+    </swiper-slide>
+  </swiper-container>
 
   <ion-grid>
     <ion-row>
@@ -108,6 +136,15 @@
               <ion-button fill="clear" class="cart-button" (click)="addToCart(producto)">
                 <ion-icon name="cart-outline" color="primary"></ion-icon>
               </ion-button>
+            </div>
+            <div class="rating-stars">
+              <ion-icon 
+                *ngFor="let star of [1,2,3,4,5]" 
+                [name]="star <= (producto.rating || 0) ? 'star' : 'star-outline'"
+                (click)="rateProduct(producto, star)"
+                class="star-icon">
+              </ion-icon>
+              <small *ngIf="producto.rating">({{producto.rating}}/5)</small>
             </div>
           </ion-card-content>
         </ion-card>

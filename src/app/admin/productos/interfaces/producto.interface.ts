@@ -8,4 +8,5 @@ export interface Producto {
   tallas: string[];
   categoria: string;
   imagen_url?: string;
+  rating?: number;
 } 

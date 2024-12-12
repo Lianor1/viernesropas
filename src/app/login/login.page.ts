@@ -14,6 +14,7 @@ export class LoginPage {
   nombres: string = '';
   apellidos: string = '';
   isLogin: boolean = true;
+  showPassword: boolean = false;
 
   constructor(
     private supabase: SupabaseService,
